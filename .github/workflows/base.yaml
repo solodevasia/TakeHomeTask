@@ -47,6 +47,17 @@ jobs:
       - name: install dependencies
         run: pnpm install -w
 
+      # Apps Backend
+
+      - name: apps backend lint
+        run: pnpm --filter backend lint
+
+      - name: apps backend test
+        run: pnpm --filter backend test
+
+      - name: apps backend build
+        run: pnpm --filter backend build
+
       # PNPM
 
       - name: test

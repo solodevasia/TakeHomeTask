@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "../../dist/backend"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "bower_components", "dist", "coverage"]
+}
