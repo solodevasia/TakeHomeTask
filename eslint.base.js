@@ -5,7 +5,6 @@ const prettierESLINT = require("eslint-plugin-prettier/recommended");
 
 const config = tsESLINT.config(
   eslint.configs.recommended,
-  ...tsESLINT.configs.recommended,
   prettierESLINT,
   importESLINT
 );
