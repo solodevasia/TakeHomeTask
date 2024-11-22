@@ -1,0 +1,2 @@
+pnpm run --parallel -r test
+pnpm run --parallel -r build
