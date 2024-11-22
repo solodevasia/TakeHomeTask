@@ -8,4 +8,7 @@ module.exports = {
   collectCoverageFrom: ['**/*.(t|j)s'],
   testEnvironment: 'node',
   coveragePathIgnorePatterns: ['src/main.ts', 'src/app.module.ts'],
+  moduleNameMapper: {
+    '@bri/(.*)$': ['<rootDir>/src/$1'],
+  },
 };

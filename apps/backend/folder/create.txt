@@ -1,0 +1,1 @@
+{"id":2,"name":"Kelley_Friesen65","email":"Morgan83@gmail.com","password":"$2b$10$HLNcIf30.coEC0FmEbjAC.mL4MXwLh1nRCMQTOLD82YyQEb7J6.ua","pic":null,"role":0,"created_at":"2024-11-22T17:35:21.618Z"}
