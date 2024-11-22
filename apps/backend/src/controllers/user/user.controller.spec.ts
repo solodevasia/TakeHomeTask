@@ -20,10 +20,12 @@ describe('UserController', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         JwtModule.register({
-          secretOrPrivateKey: fs.readFileSync(
+          global: true,
+          secret: fs.readFileSync(
             join(__dirname, '../../../jwtRS256.key'),
+            {encoding: 'utf-8'}
           ),
-          signOptions: { expiresIn: '1000s' },
+          signOptions: { expiresIn: '60s' },
         }),
         TypeOrmModule.forRoot(database),
         UserModule,
@@ -104,10 +106,13 @@ describe('UserController', () => {
       } as Partial<LoginField>)
       .expect(HttpStatus.OK)
       .then((res) =>
-        expect(res.body).toEqual({
-          accessToken: res.body.accessToken,
-          status: HttpStatus.OK,
-        }),
+        {
+          fs.writeFileSync(join(__dirname, '../../../folder/token.txt'), res.body.accessToken)
+          expect(res.body).toEqual({
+            accessToken: res.body.accessToken,
+            status: HttpStatus.OK,
+          })
+        },
       );
   });
 
@@ -145,107 +150,130 @@ describe('UserController', () => {
     await supertest(app.getHttpServer())
       .get('/user')
       .set('Content-Type', 'application/json')
-      .expect(HttpStatus.OK)
-      .then((res) =>
-        expect(res.body).toEqual({
-          result: res.body.result,
-          page: 1,
-          previousUrl: null,
-          nextUrl: res.body.pageSize >= 2 ? '/user?page=2' : null,
-          pageSize: res.body.pageSize,
-          count: res.body.count,
-          status: HttpStatus.OK,
-        }),
-      ));
+      .expect(HttpStatus.UNAUTHORIZED));
 
-  it('should call api "/user/profile"', async () =>
+  it('should call api "/user"', async () =>
     await supertest(app.getHttpServer())
-      .get('/user/profile')
+      .get('/user')
       .set('Content-Type', 'application/json')
-      .expect(HttpStatus.OK)
-      .expect({ message: 'works!' }));
+      .set('Authorization',`Bearer dqwdq`)
+      .expect(HttpStatus.UNAUTHORIZED));
 
-  if (
-    fs.readFileSync(join(__dirname, '../../../folder/create.txt'), {
-      encoding: 'utf-8',
-    })
-  ) {
-    const user = JSON.parse(
-      fs.readFileSync(join(__dirname, '../../../folder/create.txt'), {
-        encoding: 'utf-8',
-      }),
-    );
+  if(fs.readFileSync(join(__dirname, '../../../folder/token.txt'), {encoding: 'utf-8'})) {
+    const token = fs.readFileSync(join(__dirname, '../../../folder/token.txt'), {encoding: 'utf-8'})
 
-    it('should call api "/user/:id"', async () =>
+    it('should call api "/user"', async () =>
       await supertest(app.getHttpServer())
-        .get(`/user/${user.id}`)
+        .get('/user')
         .set('Content-Type', 'application/json')
+        .set('Authorization',`Bearer ${token}`)
         .expect(HttpStatus.OK)
         .then((res) =>
           expect(res.body).toEqual({
             result: res.body.result,
-            status: HttpStatus.OK,
-          }),
-        ));
-
-    it('should call api "/user/:id" not found', async () =>
-      await supertest(app.getHttpServer())
-        .get(`/user/dqwdwq`)
-        .set('Content-Type', 'application/json')
-        .expect(HttpStatus.BAD_REQUEST));
-  }
-
-  if (
-    fs.readFileSync(join(__dirname, '../../../folder/pageSize.txt'), {
-      encoding: 'utf-8',
-    })
-  ) {
-    const pageSize = fs.readFileSync(
-      join(__dirname, '../../../folder/pageSize.txt'),
-      {
-        encoding: 'utf-8',
-      },
-    );
-
-    if (Number(pageSize) >= 3) {
-      it('should call api "/user?page=2"', async () =>
-        await supertest(app.getHttpServer())
-          .get('/user')
-          .set('Content-Type', 'application/json')
-          .query({ page: 2 })
-          .expect(HttpStatus.OK)
-          .then((res) => {
-            expect(res.body).toEqual({
-              result: res.body.result,
-              page: 2,
-              previousUrl: '/user?page=1',
-              nextUrl: '/user?page=3',
-              pageSize: res.body.pageSize,
-              count: res.body.count,
-              status: HttpStatus.OK,
-            });
-          }));
-    }
-
-    it('should call api "/user?page=lastPage"', async () =>
-      await supertest(app.getHttpServer())
-        .get(`/user?page=${pageSize}`)
-        .set('Content-Type', 'application/json')
-        .expect(HttpStatus.OK)
-        .then(async (res) =>
-          expect(res.body).toEqual({
-            result: res.body.result,
-            page: Number(pageSize),
-            previousUrl:
-              Number(pageSize) > 1
-                ? `/user?page=${Number(pageSize) - 1}`
-                : null,
-            nextUrl: null,
+            page: 1,
+            previousUrl: null,
+            nextUrl: res.body.pageSize >= 2 ? '/user?page=2' : null,
             pageSize: res.body.pageSize,
             count: res.body.count,
             status: HttpStatus.OK,
           }),
         ));
+  
+    it('should call api "/user/profile"', async () =>
+      await supertest(app.getHttpServer())
+        .get('/user/profile')
+        .set('Authorization',`Bearer ${token}`)
+        .set('Content-Type', 'application/json')
+        .expect(HttpStatus.OK)
+        .then((res) => expect(res.body).toEqual({result: res.body.result, status: HttpStatus.OK})))
+  
+    if (
+      fs.readFileSync(join(__dirname, '../../../folder/create.txt'), {
+        encoding: 'utf-8',
+      })
+    ) {
+      const user = JSON.parse(
+        fs.readFileSync(join(__dirname, '../../../folder/create.txt'), {
+          encoding: 'utf-8',
+        }),
+      );
+  
+      it('should call api "/user/:id"', async () =>
+        await supertest(app.getHttpServer())
+          .get(`/user/${user.id}`)
+          .set('Content-Type', 'application/json')
+          .set('Authorization',`Bearer ${token}`)
+          .expect(HttpStatus.OK)
+          .then((res) =>
+            expect(res.body).toEqual({
+              result: res.body.result,
+              status: HttpStatus.OK,
+            }),
+          ));
+  
+      it('should call api "/user/:id" not found', async () =>
+        await supertest(app.getHttpServer())
+          .get(`/user/dqwdwq`)
+          .set('Content-Type', 'application/json')
+          .set('Authorization',`Bearer ${token}`)
+          .expect(HttpStatus.BAD_REQUEST));
+    }
+  
+    if (
+      fs.readFileSync(join(__dirname, '../../../folder/pageSize.txt'), {
+        encoding: 'utf-8',
+      })
+    ) {
+      const pageSize = fs.readFileSync(
+        join(__dirname, '../../../folder/pageSize.txt'),
+        {
+          encoding: 'utf-8',
+        },
+      );
+  
+      if (Number(pageSize) >= 3) {
+        it('should call api "/user?page=2"', async () =>
+          await supertest(app.getHttpServer())
+            .get('/user')
+            .set('Content-Type', 'application/json')
+            .set('Authorization',`Bearer ${token}`)
+            .query({ page: 2 })
+            .expect(HttpStatus.OK)
+            .then((res) => {
+              expect(res.body).toEqual({
+                result: res.body.result,
+                page: 2,
+                previousUrl: '/user?page=1',
+                nextUrl: '/user?page=3',
+                pageSize: res.body.pageSize,
+                count: res.body.count,
+                status: HttpStatus.OK,
+              });
+            }));
+      }
+  
+      it('should call api "/user?page=lastPage"', async () =>
+        await supertest(app.getHttpServer())
+          .get(`/user?page=${pageSize}`)
+          .set('Content-Type', 'application/json')
+          .set('Authorization',`Bearer ${token}`)
+          .expect(HttpStatus.OK)
+          .then(async (res) =>
+            expect(res.body).toEqual({
+              result: res.body.result,
+              page: Number(pageSize),
+              previousUrl:
+                Number(pageSize) > 1
+                  ? `/user?page=${Number(pageSize) - 1}`
+                  : null,
+              nextUrl: null,
+              pageSize: res.body.pageSize,
+              count: res.body.count,
+              status: HttpStatus.OK,
+            }),
+          ));
+    }
   }
 
   afterEach(async () => {

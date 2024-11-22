@@ -1,1 +1,1 @@
-{"id":104,"name":"Keyon.Klocko24","email":"Ashtyn97@gmail.com","password":"$2b$10$cSJSQCJNZ2ubmZPtrvN7KO1ylwNRw2pnFkxSe1zEKjfXbpUESTwoS","pic":null,"role":0,"created_at":"2024-11-22T19:09:00.895Z"}
+{"id":253,"name":"Rachel_Fritsch","email":"Stewart42@yahoo.com","password":"$2b$10$/CAlNqKTh5J.1d1YgNfX4.KkRj3IfKYm9OC01ARaIhbeMNgmO8YuC","pic":null,"role":0,"created_at":"2024-11-22T20:07:45.832Z"}

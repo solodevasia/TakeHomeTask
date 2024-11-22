@@ -71,7 +71,7 @@ export default class UserService {
     }
 
     return {
-      accessToken: this.jwtService.sign(
+      accessToken: await this.jwtService.signAsync(
         JSON.stringify(
           await this.repository.findOne({
             where,
@@ -79,7 +79,7 @@ export default class UserService {
           }),
         ),
         {
-          secret: fs.readFileSync(join(__dirname, '../../../jwtRS256.key.pub')),
+          secret: fs.readFileSync(join(__dirname, '../../../jwtRS256.key'), {encoding: 'utf-8'}),
         },
       ),
       status: HttpStatus.OK,

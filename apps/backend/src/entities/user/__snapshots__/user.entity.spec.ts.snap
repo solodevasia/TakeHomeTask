@@ -140,7 +140,7 @@ Repository {
             "Database": [Function],
             "objects": {},
           },
-          "path": "/Users/kenedynopriansyah/BRI/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/Release/node_sqlite3.node",
+          "path": "/Users/mco/BRI/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3/build/Release/node_sqlite3.node",
           "verbose": [Function],
         },
         "supportedDataTypes": [
