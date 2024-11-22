@@ -37,12 +37,11 @@ export default class UserRepository {
       take: limit,
     });
     const count = await this.repository.count();
-    const pageSize = Math.floor(count / limit);
+    const pageSize = Math.max(Math.floor(count / limit), 1);
     return {
       result,
       page,
-      nextUrl:
-        page !== pageSize && result.length ? `/user?page=${page + 1}` : null,
+      nextUrl: page !== pageSize ? `/user?page=${page + 1}` : null,
       previousUrl: page !== 1 ? `/user?page=${page - 1}` : null,
       pageSize,
       count,
