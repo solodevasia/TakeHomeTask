@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - "main"
-      - "backend"
+      - "web"
   pull_request:
     branches:
       - "main"
-      - "backend"
+      - "web"
 
 jobs:
   setup:
@@ -57,6 +57,17 @@ jobs:
 
       - name: apps backend build
         run: pnpm --filter backend build
+    
+      # Web Service
+
+      - name: web service lint
+        run: pnpm --filter web lint
+
+      - name: web service test
+        run: pnpm --filter web test
+
+      - name: web service build
+        run: pnpm --filter web build
 
       # PNPM
 
