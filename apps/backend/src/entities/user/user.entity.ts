@@ -34,6 +34,9 @@ export default class UserEntity {
   @BeforeInsert()
   beforeInsert() {
     this.password = bcrypt.hashSync(this.password, 10);
+    if (!this.role) {
+      this.role = Role.user;
+    }
   }
 
   checkPassword(password: string, hash: string) {

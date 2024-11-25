@@ -76,7 +76,7 @@ export default class UserService {
       where,
       select: ['id', 'name', 'email', 'pic', 'role', 'created_at'],
     })) as UserEntity;
-    user['is_active'] = false;
+    user['is_active'] = true;
     await this.repository.manager.save(user);
 
     return {
@@ -126,7 +126,9 @@ export default class UserService {
     }
     findOne.name = body.name;
     findOne.email = body.email;
-    await this.repository.manager.save(findOne);
+    findOne.pic = body.pic;
+    findOne.role = body.role as unknown as number;
+    await this.repository.save(findOne);
     return { message: 'Account has been updated', status: HttpStatus.OK };
   }
 

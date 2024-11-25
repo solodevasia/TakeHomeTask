@@ -14,9 +14,10 @@ export default function Input(props: Props) {
     <div className="w-[364px] bg-[#f4f4f4] rounded-[13px] h-[52px] flex items-center px-4">
       {props.icon ? props.icon : null}
       <input
+        id={props.id}
+        data-testid={props.id}
         type={props.type}
         name={props.name}
-        id={props.id}
         placeholder={props.placeholder}
         autoComplete="off"
         value={props.value}
@@ -27,4 +28,3 @@ export default function Input(props: Props) {
     </div>
   );
 }
-

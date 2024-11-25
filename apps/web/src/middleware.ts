@@ -27,6 +27,7 @@ export default async function middleware(request: NextRequest) {
     }
 
     if (cookie.get("token")?.value && isPublicRoutes) {
+      
       return resp.redirect(new URL("/dashboard", request.nextUrl));
     }
   }

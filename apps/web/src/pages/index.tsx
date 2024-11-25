@@ -1,11 +1,11 @@
 import React from "react";
 import Image from "next/image";
-import Wallpaper from "../assets/Wallpaper.svg";
-import accountIcon from "../assets/account.svg";
-import lockIcon from "../assets/lock.svg";
+import { useRouter } from "next/navigation";
 import Input from "@bri/shared/input";
 import { Button } from "@bri/shared/button";
-import { useRouter } from "next/router";
+import Wallpaper from "@bri/assets/Wallpaper.svg";
+import accountIcon from "@bri/assets/account.svg";
+import lockIcon from "@bri/assets/lock.svg";
 
 export default function Home() {
   const router = useRouter();
@@ -120,6 +120,8 @@ export default function Home() {
           <div className="text-center mt-7 font-poppins">
             You Don't have an account ?{" "}
             <span
+              id="navigate-register__testid"
+              data-testid="navigate-register__testid"
               className="cursor-pointer hover:text-blue-500 hover:underline"
               onClick={() => router.push("/register")}
             >

@@ -11,6 +11,8 @@ interface Props {
 export function Button({ children, ...props }: Props) {
   return (
     <button
+      id={props.id}
+      data-testid={props.id}
       type={props.type}
       className={`w-[364px] h-[52px] bg-[#1C1C1C] text-[#FFFFFF] rounded-[13px] font-poppins font-bold text-[12px] relative ${props.classes} ${props.disabled ? "text-disabled bg-disabled cursor-no-drop" : ""}`}
       onClick={props.disabled ? undefined : props.onClick}
@@ -24,4 +26,3 @@ export function Button({ children, ...props }: Props) {
     </button>
   );
 }
-

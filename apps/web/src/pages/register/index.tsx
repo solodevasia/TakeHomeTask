@@ -135,7 +135,11 @@ export default function Home() {
               }
             />
             {invalidEmail ? (
-              <span className="text-xs text-red-500 ml-2 mt-1">
+              <span
+                id="message-invalid-email__testid"
+                data-testid="message-invalid-email__testid"
+                className="text-xs text-red-500 ml-2 mt-1"
+              >
                 Invalid email address
               </span>
             ) : null}
@@ -174,7 +178,11 @@ export default function Home() {
               }
             />
             {passwordDontMatch ? (
-              <span className="text-xs text-red-500 ml-2 mt-1">
+              <span
+                id="message-password-dont-match__testid"
+                data-testid="message-password-dont-match__testid"
+                className="text-xs text-red-500 ml-2 mt-1"
+              >
                 Password don't match, please check again
               </span>
             ) : null}
@@ -183,7 +191,7 @@ export default function Home() {
             className={`flex items-center justify-center mt-${passwordDontMatch ? "4" : "6"}`}
           >
             <Button
-              id="button-login__testid"
+              id="button-register__testid"
               type="button"
               disabled={disabled}
               loading={loading}

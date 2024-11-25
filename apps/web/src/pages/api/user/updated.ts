@@ -1,15 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log(JSON.parse(req.body));
-    
-    await fetch(`http://localhost:4000/api/v1/user/${JSON.parse(req.body).id}`, {
+    const result = await fetch(`http://localhost:4000/api/v1/user/${req.url?.split('user=')[1]}`, {
         method: 'PUT',
         headers: {
-            "Authorization":`Bearer ${req.headers.cookie?.split('token=')?.join('')}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${req.headers.cookie?.split('token=').join('')}`
         },
         body: req.body
-    }).then(async(res) => await res.json())
-    res.status(200).json("OK")
+    }).then(async(resp) => await resp.json())
+    res.status(result.status).json(result)
 }

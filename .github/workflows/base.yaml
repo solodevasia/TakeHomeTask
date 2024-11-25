@@ -63,8 +63,8 @@ jobs:
       - name: web service lint
         run: pnpm --filter web lint
 
-      # - name: web service test
-      #   run: pnpm --filter web test
+      - name: web service test
+        run: pnpm --filter web test
 
       - name: web service build
         run: pnpm --filter web build
