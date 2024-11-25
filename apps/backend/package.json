@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "dotenvx run --env-file=.env.prod -- nest build",
-    "start": "dotenvx run --env-file=.env -- nest start --watch",
+    "start": "dotenvx run --env-file=.env.test -- nest start --watch",
     "test": "dotenvx run --env-file=.env.test -- jest --coverage -u",
     "watchAll": "dotenvx run --env-file=.env.test -- jest --coverage -u --watchAll",
     "lint": "eslint . --fix"

@@ -1,59 +1,99 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   MaterialReactTable,
+  MRT_PaginationState,
   useMaterialReactTable,
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from "material-react-table";
 import moment from "moment";
-import Image from "next/image";
+import Delete from "@mui/icons-material/Delete";
 
 const role = ["member", "staff", "admin"];
 
 export default function App() {
   const [data, setData] = useState([]);
+  const [pagination] = useState<MRT_PaginationState>({
+    pageIndex: 0,
+    pageSize: 5,
+  });
+  const [isDeleted, setIsDeleted] = useState(false);
   const columns = useMemo<MRT_ColumnDef<object>[]>(
     () => [
       {
-        accessorKey: "name", 
-        header: "Name",
-        enableHiding: false, 
+        accessorKey: "id",
+        header: "Actions",
+        Cell: ({ row }) => {
+          function onDelete() {
+            fetch("/api/user/destroy", {
+              method: "POST",
+              body: JSON.stringify({
+                id: (row.original as { id: number }).id,
+              }),
+            }).then(async () => {
+              setIsDeleted(() => true);
+            });
+          }
+          return (
+            <div className="flex items-center">
+              <Delete
+                className="w-2 h-2 ml-3 text-red-500 cursor-pointer"
+                onClick={onDelete}
+              />
+            </div>
+          );
+        },
       },
       {
-        accessorKey: "email", 
+        accessorKey: "name",
+        header: "Name",
+        enableHiding: false,
+      },
+      {
+        accessorKey: "email",
         header: "Email",
-        enableHiding: false, 
+        enableHiding: false,
       },
       {
         accessorKey: "pic",
-        id: "pic", 
+        id: "pic",
         header: "pic",
-        Cell: ({ cell }) => <div>{cell.getValue() || ("" as any)}</div>, 
+        Cell: ({ cell }) => <div>{cell.getValue() || ("" as any)}</div>,
       },
       {
         accessorKey: "role",
-        id: "role", 
+        id: "role",
         header: "role",
-        Cell: ({ cell }) => <i>{role[cell.getValue() as any]}</i>, 
+        Cell: ({ cell }) => <i>{role[cell.getValue() as any]}</i>,
       },
       {
         accessorKey: "created_at",
-        id: "created_at", 
+        id: "created_at",
         header: "Created Date",
         Cell: ({ cell }) => (
           <div>{moment(cell.getValue() as any).format("DD-MM-YYYY")}</div>
-        ), 
+        ),
       },
     ],
     []
   );
 
-  
   const table = useMaterialReactTable({
     columns,
-    data, 
-    enableRowSelection: true, 
+    data,
+    enableRowSelection: false,
     enableColumnOrdering: true,
     enableGlobalFilter: false,
+    muiPaginationProps: {
+      color: "secondary",
+      rowsPerPageOptions: [5, 10, 20, 30],
+      shape: "rounded",
+      variant: "outlined",
+    },
+    paginationDisplayMode: "pages",
+    positionToolbarAlertBanner: "bottom",
+    initialState: {
+      pagination,
+    },
   });
 
   function fetchUserList() {
@@ -65,7 +105,8 @@ export default function App() {
 
   useEffect(() => {
     fetchUserList();
-  }, []);
+    setIsDeleted(() => false);
+  }, [isDeleted]);
 
   function Logout() {
     fetch("/api/logout").then(async () => {
@@ -80,7 +121,7 @@ export default function App() {
             href="https://flowbite.com/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
-            <Image
+            <img
               src="https://flowbite.com/docs/images/logo.svg"
               className="h-8"
               alt="Flowbite Logo"

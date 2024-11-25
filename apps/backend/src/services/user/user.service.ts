@@ -87,4 +87,19 @@ export default class UserService {
       status: HttpStatus.OK,
     };
   }
+
+  async destroy(id: number) {
+    const findOne = await this.repository.findOne({ where: { id } });
+    if (!findOne) {
+      throw new HttpException(
+        {
+          message: 'Account not found',
+          status: HttpStatus.BAD_REQUEST,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    await this.repository.delete(findOne.id);
+    return { message: 'Account has been deleted', status: HttpStatus.OK };
+  }
 }

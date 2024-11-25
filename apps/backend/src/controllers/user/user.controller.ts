@@ -10,6 +10,7 @@ import { CustomRequest } from '@bri/types/request';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -44,6 +45,12 @@ export default class UserController {
   @UseGuards(AuthGuard)
   profile(@Req() req: CustomRequest) {
     return this.repository.findOne(req.user.id);
+  }
+
+  @Delete('/:id')
+  @HttpCode(HttpStatus.OK)
+  delete(@Param('id') id: number) {
+    return this.service.destroy(id);
   }
 
   @Get()

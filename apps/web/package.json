@@ -10,6 +10,8 @@
     "test": "vitest run --coverage -u"
   },
   "dependencies": {
+    "@mui/icons-material": "^6.1.8",
+    "@reduxjs/toolkit": "^2.3.0",
     "@tanstack/react-query": "^5.61.3",
     "@tanstack/react-table": "^8.20.5",
     "@tanstack/react-virtual": "^3.10.9",
