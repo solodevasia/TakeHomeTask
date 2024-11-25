@@ -42,7 +42,7 @@ export default function Home() {
       }
 
       if (data.status <= 200) {
-        // window.location.reload();
+        window.location.reload();
       }
     });
   }
