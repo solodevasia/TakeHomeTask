@@ -49,17 +49,18 @@ export default class UserController {
     return this.repository.findOne(req.user.id);
   }
 
-  @Put("/:id")
+  @Put('/:id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   updated(@Param('id') id: number, @Body() body: UpdatedSchema) {
-    return this.service.updated(id,body)
+    return this.service.updated(id, body);
   }
 
   @Delete('/:id')
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  delete(@Param('id') id: number) {
-    return this.service.destroy(id);
+  delete(@Param('id') id: number, @Req() req: CustomRequest) {
+    return this.service.destroy(id, req.user.role);
   }
 
   @Get()
@@ -74,5 +75,12 @@ export default class UserController {
   @UseGuards(AuthGuard)
   detail(@Param('id') id: number) {
     return this.repository.findOne(id);
+  }
+
+  @Post('/logout')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  logout(@Req() req: CustomRequest) {
+    return this.service.logout(req.user.id);
   }
 }

@@ -12,6 +12,8 @@ export default function Home() {
   const [state, setState] = React.useState({
     name: "",
     email: "",
+    pic: "",
+    role: 0,
     password: "",
     confirmation: "",
   });
@@ -207,4 +209,3 @@ export default function Home() {
     </div>
   );
 }
-

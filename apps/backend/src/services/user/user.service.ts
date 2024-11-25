@@ -72,25 +72,24 @@ export default class UserService {
       );
     }
 
+    const user = (await this.repository.findOne({
+      where,
+      select: ['id', 'name', 'email', 'pic', 'role', 'created_at'],
+    })) as UserEntity;
+    user['is_active'] = false;
+    await this.repository.manager.save(user);
+
     return {
-      accessToken: await this.jwtService.signAsync(
-        JSON.stringify(
-          await this.repository.findOne({
-            where,
-            select: ['id', 'name', 'email', 'pic', 'role', 'created_at'],
-          }),
-        ),
-        {
-          secret: fs.readFileSync(join(__dirname, '../../../jwtRS256.key'), {
-            encoding: 'utf-8',
-          }),
-        },
-      ),
+      accessToken: await this.jwtService.signAsync(JSON.stringify(user), {
+        secret: fs.readFileSync(join(__dirname, '../../../jwtRS256.key'), {
+          encoding: 'utf-8',
+        }),
+      }),
       status: HttpStatus.OK,
     };
   }
 
-  async destroy(id: number) {
+  async destroy(id: number, currentUserRole: number) {
     const findOne = await this.repository.findOne({ where: { id } });
     if (!findOne) {
       throw new HttpException(
@@ -101,23 +100,42 @@ export default class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    if (currentUserRole === 2) {
+      throw new HttpException(
+        {
+          message: "You don't have this access!",
+          status: HttpStatus.BAD_REQUEST,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     await this.repository.delete(findOne.id);
     return { message: 'Account has been deleted', status: HttpStatus.OK };
   }
 
-  async updated(id: number,body: UpdatedSchema) {
-    const findOne = await this.repository.findOne({where: {id}})
-    if(!findOne) {
-      throw new HttpException({
-        message: 'Account not found',
-        status: HttpStatus.BAD_REQUEST
-      },HttpStatus.BAD_REQUEST)
+  async updated(id: number, body: UpdatedSchema) {
+    const findOne = await this.repository.findOne({ where: { id } });
+    if (!findOne) {
+      throw new HttpException(
+        {
+          message: 'Account not found',
+          status: HttpStatus.BAD_REQUEST,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    findOne.name = body.name
-    findOne.email = body.email
-    findOne.pic = body.pic
-    findOne.role = Role[String(body.role).toLowerCase() as any] as any;
-    await this.repository.manager.save(findOne)
-    return {message: 'Account has been updated', status: HttpStatus.OK}
+    findOne.name = body.name;
+    findOne.email = body.email;
+    await this.repository.manager.save(findOne);
+    return { message: 'Account has been updated', status: HttpStatus.OK };
+  }
+
+  async logout(id: number) {
+    const findOne = (await this.repository.findOne({
+      where: { id },
+    })) as UserEntity;
+    findOne.is_active = false;
+    await this.repository.manager.save(findOne);
+    return { message: 'successfully', status: HttpStatus.OK };
   }
 }

@@ -13,7 +13,10 @@ export default class UserRepository {
   ) {}
 
   async findOne(id: number) {
-    const result = await this.repository.findOne({ where: { id } });
+    const result = await this.repository.findOne({
+      where: { id },
+      select: ['id', 'name', 'email', 'pic', 'role', 'created_at', 'is_active'],
+    });
     if (!result) {
       throw new HttpException(
         {
@@ -33,6 +36,7 @@ export default class UserRepository {
       where: {
         ...(_.omit(query, ['page', 'limit']) as unknown as UserEntity),
       },
+      select: ['id', 'name', 'email', 'pic', 'role', 'created_at', 'is_active'],
       skip: limit * page - limit || 0,
       take: limit,
     });

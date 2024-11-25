@@ -1,5 +1,6 @@
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import bcrypt from 'bcrypt';
+import { Role } from '@bri/types/role';
 
 @Entity({
   name: 'user',
@@ -21,11 +22,14 @@ export default class UserEntity {
   @Column({ nullable: true })
   pic!: string;
 
-  @Column()
-  role: number = 0;
+  @Column({ type: 'simple-enum', enum: Role, default: Role.user })
+  role!: number;
 
   @Column()
   created_at: Date = new Date();
+
+  @Column()
+  is_active: boolean = false;
 
   @BeforeInsert()
   beforeInsert() {

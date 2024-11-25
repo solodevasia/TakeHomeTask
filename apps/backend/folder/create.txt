@@ -1,1 +1,1 @@
-{"id":321,"name":"Jennyfer57","email":"Ciara_Marks1@gmail.com","password":"$2b$10$oODBcxCdZEzk/WCj5zd2f.exkJG5Ys2eXDL7S3WjEZWp/m2Xra43m","pic":null,"role":0,"created_at":"2024-11-25T06:56:11.961Z"}
+{"id":45,"name":"Vernice15","email":"Ciara.Boyle@gmail.com","password":"$2b$10$LrJbpvJ9HymLOZXI/QNMZuIh1AHBqPNBmZZL5z/EzWmILO1v806ZS","pic":null,"role":2,"created_at":"2024-11-25T14:09:38.720Z","is_active":false}
