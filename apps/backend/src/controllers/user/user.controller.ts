@@ -2,6 +2,7 @@ import AuthGuard from '@bri/decorators/auth-guard';
 import {
   LoginField,
   QueryUserList,
+  UpdatedSchema,
   UserRegisterField,
 } from '@bri/dto/user.dto';
 import UserRepository from '@bri/repository/user/user.repository';
@@ -16,6 +17,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -45,6 +47,13 @@ export default class UserController {
   @UseGuards(AuthGuard)
   profile(@Req() req: CustomRequest) {
     return this.repository.findOne(req.user.id);
+  }
+
+  @Put("/:id")
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  updated(@Param('id') id: number, @Body() body: UpdatedSchema) {
+    return this.service.updated(id,body)
   }
 
   @Delete('/:id')

@@ -1,3 +1,4 @@
+import { Role } from '@bri/types/role';
 import { z, ZodIssueCode } from 'zod';
 
 export const queryUserList = z.object({
@@ -35,3 +36,13 @@ export const loginField = z.object({
 });
 
 export type LoginField = z.infer<typeof loginField>;
+
+export const updatedSchema = z.object({
+  name: z.string(),
+  email: z.string(),
+  role: z.enum(['member','staff','admin']),
+  pic: z.string()
+})
+
+
+export type UpdatedSchema = z.infer<typeof updatedSchema>

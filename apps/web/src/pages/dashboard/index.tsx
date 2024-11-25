@@ -2,11 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import {
   MaterialReactTable,
   MRT_PaginationState,
+  MRT_TableOptions,
   useMaterialReactTable,
   type MRT_ColumnDef, //if using TypeScript (optional, but recommended)
 } from "material-react-table";
+import {
+  Box,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import moment from "moment";
-import Delete from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const role = ["member", "staff", "admin"];
 
@@ -17,31 +24,14 @@ export default function App() {
     pageSize: 5,
   });
   const [isDeleted, setIsDeleted] = useState(false);
+  const [isUpdated,setIsUpdated] = useState(false)
   const columns = useMemo<MRT_ColumnDef<object>[]>(
     () => [
       {
-        accessorKey: "id",
-        header: "Actions",
-        Cell: ({ row }) => {
-          function onDelete() {
-            fetch("/api/user/destroy", {
-              method: "POST",
-              body: JSON.stringify({
-                id: (row.original as { id: number }).id,
-              }),
-            }).then(async () => {
-              setIsDeleted(() => true);
-            });
-          }
-          return (
-            <div className="flex items-center">
-              <Delete
-                className="w-2 h-2 ml-3 text-red-500 cursor-pointer"
-                onClick={onDelete}
-              />
-            </div>
-          );
-        },
+        accessorKey: 'id',
+        header: 'id',
+        visibleInShowHideMenu: false,
+        enableEditing: false
       },
       {
         accessorKey: "name",
@@ -61,9 +51,13 @@ export default function App() {
       },
       {
         accessorKey: "role",
+        accessorFn: (row) => `${role[(row as {role: number}).role]}`,
         id: "role",
+        editVariant: 'select',
+        editSelectOptions() {
+          return ["Member", "Staff","Admin"]
+        },
         header: "role",
-        Cell: ({ cell }) => <i>{role[cell.getValue() as any]}</i>,
       },
       {
         accessorKey: "created_at",
@@ -72,14 +66,28 @@ export default function App() {
         Cell: ({ cell }) => (
           <div>{moment(cell.getValue() as any).format("DD-MM-YYYY")}</div>
         ),
+        enableEditing: false,
       },
     ],
     []
   );
 
+  const handleSaveUser: MRT_TableOptions<object>['onEditingRowSave'] = async ({
+    values,
+    table,
+  }) => {
+    fetch('/api/user/updated', {method: 'PUT', body: JSON.stringify(values)}).then(async() => {
+      table.setEditingRow(null)
+      setIsUpdated(() => true)
+    })
+  };
+
   const table = useMaterialReactTable({
     columns,
     data,
+    createDisplayMode: "modal", 
+    editDisplayMode: "modal", 
+    enableEditing: true,
     enableRowSelection: false,
     enableColumnOrdering: true,
     enableGlobalFilter: false,
@@ -89,11 +97,26 @@ export default function App() {
       shape: "rounded",
       variant: "outlined",
     },
+    onEditingRowSave: handleSaveUser,
     paginationDisplayMode: "pages",
     positionToolbarAlertBanner: "bottom",
     initialState: {
       pagination,
     },
+    renderRowActions: ({ row, table }) => (
+      <Box sx={{ display: "flex", gap: "1rem" }}>
+        <Tooltip title="Edit">
+          <IconButton onClick={() => table.setEditingRow(row)}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete">
+          <IconButton color="error">
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    ),
   });
 
   function fetchUserList() {
@@ -106,13 +129,15 @@ export default function App() {
   useEffect(() => {
     fetchUserList();
     setIsDeleted(() => false);
-  }, [isDeleted]);
+    setIsUpdated(() => false)
+  }, [isDeleted, isUpdated]);
 
   function Logout() {
     fetch("/api/logout").then(async () => {
       window.location.reload();
     });
   }
+
   return (
     <div>
       <nav className="bg-white border-gray-200 dark:bg-gray-900">
