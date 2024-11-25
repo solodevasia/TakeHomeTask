@@ -57,7 +57,7 @@ jobs:
 
       - name: apps backend build
         run: pnpm --filter backend build
-    
+
       # Web Service
 
       - name: web service lint

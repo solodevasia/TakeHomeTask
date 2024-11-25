@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "../../dist/backend",
+    "outDir": "./dist",
     "paths": {
       "@bri/*": ["./src/*"]
     }

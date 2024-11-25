@@ -79,7 +79,9 @@ export default class UserService {
           }),
         ),
         {
-          secret: fs.readFileSync(join(__dirname, '../../../jwtRS256.key'), {encoding: 'utf-8'}),
+          secret: fs.readFileSync(join(__dirname, '../../../jwtRS256.key'), {
+            encoding: 'utf-8',
+          }),
         },
       ),
       status: HttpStatus.OK,

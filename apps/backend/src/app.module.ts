@@ -6,11 +6,13 @@ import { JwtModule } from '@nestjs/jwt';
 import fs from 'fs';
 import { join } from 'path';
 
+console.log(__dirname);
+
 @Module({
   imports: [
     TypeOrmModule.forRoot(database),
     JwtModule.register({
-      secretOrPrivateKey: fs.readFileSync(join(__dirname, process.env.NODE_ENV === 'test' ? '../jwtRS256.key' : '../../apps/backend/jwtRS256.key')),
+      secretOrPrivateKey: fs.readFileSync(join(__dirname, '../jwtRS256.key')),
       signOptions: { expiresIn: '1000s' },
     }),
     UserModule,

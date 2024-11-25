@@ -30,8 +30,6 @@ export default class UserController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   created(@Body() body: UserRegisterField) {
-    console.log(body);
-    
     return this.service.created(body);
   }
 
@@ -45,7 +43,7 @@ export default class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   profile(@Req() req: CustomRequest) {
-    return this.repository.findOne(req.user.id)
+    return this.repository.findOne(req.user.id);
   }
 
   @Get()
