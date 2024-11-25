@@ -4,7 +4,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const result = await fetch("http://localhost:4000/api/v1/user", {
+  const result = await fetch(`http://localhost:4000/api/v1/user?${req.url?.split("?").pop()}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${req.headers.cookie?.split("token=")?.join("")}`,

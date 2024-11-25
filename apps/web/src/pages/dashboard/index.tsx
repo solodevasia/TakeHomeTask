@@ -18,11 +18,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const role = ["member", "staff", "admin"];
 
 export default function App() {
-  const [data, setData] = useState([]);
-  const [pagination] = useState<MRT_PaginationState>({
+  const [data, setData] = useState<object[]>([]);
+  const [pagination,setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: 10,
   });
+  const [count,setCount] = useState(0)
   const [isDeleted, setIsDeleted] = useState(false);
   const [isUpdated,setIsUpdated] = useState(false)
   const columns = useMemo<MRT_ColumnDef<object>[]>(
@@ -72,6 +73,7 @@ export default function App() {
     []
   );
 
+
   const handleSaveUser: MRT_TableOptions<object>['onEditingRowSave'] = async ({
     values,
     table,
@@ -91,18 +93,19 @@ export default function App() {
     enableRowSelection: false,
     enableColumnOrdering: true,
     enableGlobalFilter: false,
+    rowCount: count,
+    manualPagination: true,
+    state: {pagination},
     muiPaginationProps: {
       color: "secondary",
-      rowsPerPageOptions: [5, 10, 20, 30],
+      rowsPerPageOptions: [10, 20, 30],
       shape: "rounded",
       variant: "outlined",
     },
+    onPaginationChange: setPagination,
     onEditingRowSave: handleSaveUser,
     paginationDisplayMode: "pages",
     positionToolbarAlertBanner: "bottom",
-    initialState: {
-      pagination,
-    },
     renderRowActions: ({ row, table }) => (
       <Box sx={{ display: "flex", gap: "1rem" }}>
         <Tooltip title="Edit">
@@ -118,16 +121,18 @@ export default function App() {
       </Box>
     ),
   });
+  
 
-  function fetchUserList() {
-    fetch("/api/user/list").then(async (res) => {
-      const data = await res.json();
-      setData(() => data.result);
+  function fetchUserList(page = 1, limit = 10) {
+    fetch(`/api/user/list?page=${page === 0 ? 2 : page + 1}&limit=${limit}`).then(async (res) => {
+      const result = await res.json();
+      setData(() => result.result);
+      setCount(() => result.count)
     });
   }
 
   useEffect(() => {
-    fetchUserList();
+    fetchUserList(pagination.pageIndex, pagination.pageSize);
     setIsDeleted(() => false);
     setIsUpdated(() => false)
   }, [isDeleted, isUpdated]);
@@ -137,6 +142,10 @@ export default function App() {
       window.location.reload();
     });
   }
+
+  useEffect(() => {
+    fetchUserList(pagination.pageIndex, pagination.pageSize)
+  },[pagination.pageIndex,pagination.pageSize])
 
   return (
     <div>
@@ -195,7 +204,7 @@ export default function App() {
         </div>
       </nav>
 
-      <MaterialReactTable table={table} />
+      <MaterialReactTable table={table}/>
     </div>
   );
 }
